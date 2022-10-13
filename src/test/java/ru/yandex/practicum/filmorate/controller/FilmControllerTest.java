@@ -14,11 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilmControllerTest {
 
     @Autowired
-    FilmController filmController;
+    private FilmController filmController;
 
     @Test
     void createFilmOrdinaryEmailTest() {
-        Film testFilm = new Film(1,"Jaws10","Film about sharks.", LocalDate.of(2025,01,30),120);
+        Film testFilm = new Film(1,"Jaws10","Film about sharks.",
+                LocalDate.of(2025,01,30),120);
         filmController.createFilm(testFilm);
         assertTrue(filmController.getFilms().contains(testFilm));
         assertEquals(testFilm,filmController.getFilms().get(0));
@@ -26,8 +27,10 @@ class FilmControllerTest {
 
     @Test
     void createFilmWithBlankNameTest() {
-        Film testFilm = new Film(1,"","Film about sharks.", LocalDate.of(2025,01,30),120);
-        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.createFilm(testFilm));
+        Film testFilm = new Film(1,"","Film about sharks.",
+                LocalDate.of(2025,01,30),120);
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> filmController.createFilm(testFilm));
         assertEquals(exception.getMessage(),"Название не может быть пустым.");
     }
 
@@ -38,21 +41,26 @@ class FilmControllerTest {
                 "and more sharks and more sharks and more sharks and more sharks and more sharks and more sharks " +
                 "and more sharks and more sharks and more sharks and more sharks and more sharks and more sharks " +
                 "and more sharks.", LocalDate.of(2025,01,30),120);
-        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.createFilm(testFilm));
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> filmController.createFilm(testFilm));
         assertEquals(exception.getMessage(),"Максимальная длина описания — 200 символов превышена.");
     }
 
     @Test
     void createFilmWithDateReleaseInIncorrectPastTest() {
-        Film testFilm = new Film(1,"Jaws10","Film about sharks.", LocalDate.of(1895,12,27),120);
-        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.createFilm(testFilm));
+        Film testFilm = new Film(1,"Jaws10","Film about sharks.",
+                LocalDate.of(1895,12,27),120);
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> filmController.createFilm(testFilm));
         assertEquals(exception.getMessage(),"Дата релиза указана неверно.");
     }
 
     @Test
     void createFilmWithMinusDurationTest() {
-        Film testFilm = new Film(1,"Jaws10","Film about sharks.", LocalDate.of(2025,12,27),-120);
-        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.createFilm(testFilm));
+        Film testFilm = new Film(1,"Jaws10","Film about sharks.",
+                LocalDate.of(2025,12,27),-120);
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> filmController.createFilm(testFilm));
         assertEquals(exception.getMessage(),"Продолжительность фильма должна быть положительной.");
     }
 }
