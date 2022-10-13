@@ -57,7 +57,11 @@ public class UserController {
     }
 
     @GetMapping("users")
-    public List<User> getUsers() {
+    public List<User> getAllUsers() {
         return new ArrayList<>(users.values());
+    }
+
+    protected  Map<Integer,User> getUsers() {
+        return this.users;
     }
 }

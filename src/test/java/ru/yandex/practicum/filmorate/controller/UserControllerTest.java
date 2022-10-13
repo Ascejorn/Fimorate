@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,8 +21,8 @@ class UserControllerTest {
     void createUserOrdinaryEmailTest() {
         User testUser = new User(1,"aaa@mail.ru","alexLoLo","alex", LocalDate.of(1999,01,30));
         userController.createUser(testUser);
-        assertTrue(userController.getUsers().contains(testUser));
-        assertEquals(testUser,userController.getUsers().get(0));
+        assertTrue(userController.getAllUsers().contains(testUser));
+        assertEquals(testUser,userController.getAllUsers().get(0));
     }
 
     @Test
@@ -39,8 +38,6 @@ class UserControllerTest {
         ValidationException exception = assertThrows(ValidationException.class, () -> userController.createUser(testUser));
         assertEquals(exception.getMessage(),"Электронная почта не может быть пустой и должна содержать символ @ .");
     }
-
-
 
     @Test
     void createUserWithBlankLoginTest() {
@@ -60,9 +57,9 @@ class UserControllerTest {
     void createUserWithBlankNameTest() {
         User testUser = new User(1,"valid@email.ru","aaaa","", LocalDate.of(1999,01,30));
         userController.createUser(testUser);
-        assertTrue(userController.getUsers().contains(testUser));
-        assertEquals(testUser,userController.getUsers().get(0));
-        assertEquals(testUser.getName(),userController.getUsers().get(0).getLogin());
+        assertTrue(userController.getAllUsers().contains(testUser));
+        assertEquals(testUser,userController.getAllUsers().get(0));
+        assertEquals(testUser.getName(),userController.getAllUsers().get(0).getLogin());
     }
 
     @Test
@@ -71,4 +68,10 @@ class UserControllerTest {
         ValidationException exception = assertThrows(ValidationException.class, () -> userController.createUser(testUser));
         assertEquals(exception.getMessage(),"Дата рождения не может быть в будущем.");
     }
+
+    @AfterEach
+    void deleteResults() {
+        userController.getUsers().clear();
+    }
+
 }
