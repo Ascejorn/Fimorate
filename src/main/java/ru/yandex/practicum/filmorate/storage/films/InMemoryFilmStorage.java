@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.*;
 
 @Slf4j
-@Component("filmStorage")
+@Component("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
     private long filmIdGenerator;
@@ -29,7 +29,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        if (film.getId() == 0) film.setId(++filmIdGenerator);
+        if (film.getId() == 0) {
+            film.setId(++filmIdGenerator);
+        }
         log.debug("Генерация ID для фильма {}", film);
         films.put(film.getId(), film);
         log.debug("Сохранение в память {} фильма.", film);

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import ru.yandex.practicum.filmorate.validation.Create;
 import ru.yandex.practicum.filmorate.validation.IdValidation;
 import ru.yandex.practicum.filmorate.validation.Update;
@@ -9,16 +10,18 @@ import ru.yandex.practicum.filmorate.validation.UsedEmailValidation;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
-@Data
+@NoArgsConstructor
+@Setter
+@Getter
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@Builder
+@ToString
+@SuperBuilder
 @IdValidation(value = "user", groups = {Update.class})
 public class User extends Id {
     @NotNull(message = "Email не должно быть пустым.", groups = {Create.class})
     @Email(message = "Неправильный email", groups = {Create.class, Update.class})
     @UsedEmailValidation(groups = {Create.class, Update.class})
-    String email;
+    private String email;
 
     @NotBlank(message = "Login не должен быть пустым.", groups = {Create.class})
     @Pattern(
@@ -26,10 +29,10 @@ public class User extends Id {
             message = "Login должен сосотоять из букв, цифр и быть от 3 до 20 символов.",
             groups = {Create.class, Update.class}
     )
-    String login;
+    private String login;
 
-    String name;
+    private String name;
 
     @Past(message = "День рождения не должен быть в будущем.", groups = {Create.class, Update.class})
-    LocalDate birthday;
+    private LocalDate birthday;
 }

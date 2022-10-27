@@ -47,8 +47,8 @@ public class ErrorHandler {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(RuntimeException.class)
-    public ErrorResponse handleServerErrorException(RuntimeException exception) {
+    @ExceptionHandler(Throwable.class)
+    public ErrorResponse handleServerErrorException(Throwable exception) {
         log.debug("Ошибка сервера: {}", exception.getMessage());
         return new ErrorResponse(exception.getMessage());
     }
