@@ -6,16 +6,16 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class UsedEmailValidator implements ConstraintValidator<UsedEmailValidation, String> {
+public class UsedLoginValidator implements ConstraintValidator<UsedLoginValidation, String> {
 
     private final UserService service;
 
     @Autowired
-    public UsedEmailValidator(UserService userService) {
+    public UsedLoginValidator(UserService userService) {
         this.service = userService;
     }
 
-    public boolean isValid(String email, ConstraintValidatorContext cxt) {
-        return service.isNotExistEmail(email);
+    public boolean isValid(String login, ConstraintValidatorContext cxt) {
+        return service.isNotExistLogin(login);
     }
 }

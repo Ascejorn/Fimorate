@@ -4,19 +4,23 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface FilmStorage {
 
-    Optional<Film> getFilmById(long id);
+    Optional<Film> loadFilm(long id);
 
-    Film addFilm(Film film);
+    long saveFilm(Film film);
 
-    List<Film> getAllFilms();
+    void updateFilm(Film film);
 
-    void saveLikes(long id, Set<Long> scores);
+    List<Film> loadFilms();
 
-    Optional<Set<Long>> loadLikes(long id);
+    void saveLikeFromUser(long filmId, long userId);
+
+    void deleteLikeFromUser(long filmId, long userId);
+
+    boolean hasFilmLikeFromUser(long filmId, long userId);
+
+    List<Film> loadPopularFilms(long count);
 
 }
-

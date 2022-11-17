@@ -1,13 +1,12 @@
 package ru.yandex.practicum.filmorate.storage.films;
 
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-@Slf4j
 @Component("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
@@ -16,48 +15,72 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Set<Long>> likes;
 
     public InMemoryFilmStorage() {
-        filmIdGenerator = 0;
+        filmIdGenerator = 0L;
         films = new HashMap<>();
         likes = new HashMap<>();
     }
 
     @Override
-    public Optional<Film> getFilmById(long id) {
-        log.debug("Получение фильма из памяти {}", films.get(id));
+    public Optional<Film> loadFilm(long id) {
         return Optional.ofNullable(films.get(id));
     }
 
     @Override
-    public Film addFilm(Film film) {
-        if (film.getId() == 0) {
-            film.setId(++filmIdGenerator);
-        }
-        log.debug("Генерация ID для фильма {}", film);
+    public long saveFilm(Film film) {
+        if (film.getId() == 0) film.setId(++filmIdGenerator);
         films.put(film.getId(), film);
-        log.debug("Сохранение в память {} фильма.", film);
-        return film;
+        return film.getId();
     }
 
     @Override
-    public List<Film> getAllFilms() {
-        log.debug("Получение всех ({}) фильмов.", films.size());
+    public void updateFilm(Film film) {
+        films.put(film.getId(), film);
+    }
+
+    @Override
+    public ArrayList<Film> loadFilms() {
         return new ArrayList<>(films.values());
     }
 
     @Override
-    public void saveLikes(long id, Set<Long> newLikes) {
-        likes.put(id, newLikes);
-        log.debug("Сохраняем для id #{} в память {} лайки.", id, newLikes.size());
+    public void saveLikeFromUser(long filmId, long userId) {
+        Set<Long> filmLikes = likes.get(filmId);
+        filmLikes.add(userId);
+        likes.put(filmId, filmLikes);
     }
 
     @Override
-    public Optional<Set<Long>> loadLikes(long id) {
-        int count = (likes.get(id) == null) ? 0 : likes.get(id).size();
-        log.debug(
-                "Загрузка из памяти {} лайков для id #{}",
-                count,
-                id
-        );
-        return Optional.ofNullable(likes.get(id));
+    public void deleteLikeFromUser(long filmId, long userId) {
+        Set<Long> filmLikes = likes.get(filmId);
+        filmLikes.remove(userId);
+        likes.put(filmId, filmLikes);
+    }
+
+    @Override
+    public boolean hasFilmLikeFromUser(long filmId, long userId) {
+        Optional<Set<Long>> filmLikes =  Optional.ofNullable(likes.get(filmId));
+        return filmLikes.map(l -> l.contains(userId)).orElse(false);
+    }
+
+    @Override
+    public List<Film> loadPopularFilms(long count) {
+        return new ArrayList<>(films.values()).stream()
+                .sorted((f1, f2) -> {
+                    if (loadLikes(f1.getId()) == 0 && loadLikes(f1.getId()) == 0) {
+                        return 0;
+                    } else if (loadLikes(f2.getId()) == 0) {
+                        return -1;
+                    } else if (loadLikes(f1.getId()) == 0) {
+                        return 1;
+                    } else {
+                        return loadLikes(f2.getId()) - loadLikes(f1.getId());
+                    }
+                })
+                .limit(count)
+                .collect(Collectors.toList());
+    }
+
+    private int loadLikes(long filmId) {
+        return likes.get(filmId).size();
     }
 }
