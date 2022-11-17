@@ -64,7 +64,7 @@ class UserControllerTest {
                                 "\"name\": \"User Name\"," +
                                 "\"birthday\": \"1988-04-01\"}"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.email").value("Email is required"));
+                .andExpect(jsonPath("$.email").value("Email is required."));
     }
 
     @Test
@@ -77,7 +77,7 @@ class UserControllerTest {
                                 "\"name\": \"User Name\"," +
                                 "\"birthday\": \"1988-04-01\"}"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.email").value("Invalid email"));
+                .andExpect(jsonPath("$.email").value("Invalid email."));
     }
 
     @Test
@@ -88,7 +88,7 @@ class UserControllerTest {
                         .content("{\"name\": \"User Name\"," +
                                 "\"birthday\": \"1988-04-01\"}"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.login").value("Login is required"));
+                .andExpect(jsonPath("$.login").value("Login is required."));
     }
 
     @Test
@@ -102,7 +102,7 @@ class UserControllerTest {
                                 "\"birthday\": \"1988-04-01\"}"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.login").
-                        value("Login consists of letters, numbers, dash and 3-20 characters"));
+                        value("Login consists of letters, numbers, dash and 3-20 characters."));
     }
 
     @Test
@@ -115,7 +115,7 @@ class UserControllerTest {
                                 "\"name\": \"User Name\"," +
                                 "\"birthday\": \"2088-04-01\"}"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.birthday").value("Birthday can't be in the future"));
+                .andExpect(jsonPath("$.birthday").value("Birthday can't be in the future."));
     }
 
     @Test
@@ -135,6 +135,6 @@ class UserControllerTest {
                                 "\"name\": \"User Name\"," +
                                 " \"birthday\": \"2018-04-01\"}"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.email").value("Email already in use"));
+                .andExpect(jsonPath("$.email").value("Email already in use."));
     }
 }

@@ -15,7 +15,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 @Documented
 @Constraint(validatedBy = LocalDateMinValidator.class)
 public @interface LocalDateMinValidation {
-    String message() default "Movie should be released after {value}";
+    String message() default "Movie should be released after {value}.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 

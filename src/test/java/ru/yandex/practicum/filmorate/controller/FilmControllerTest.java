@@ -53,7 +53,7 @@ class FilmControllerTest {
                                 "\"duration\": 91," +
                                 "\"mpa\": {\"id\": 1}}"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.name").value("Name should be not blank"));
+                .andExpect(jsonPath("$.name").value("Name should not be blank."));
     }
 
     @Test
@@ -67,7 +67,7 @@ class FilmControllerTest {
                                 "\"duration\": 91," +
                                 "\"mpa\": {\"id\": 1}}"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.name").value("Name should be not blank"));
+                .andExpect(jsonPath("$.name").value("Name should not be blank."));
     }
 
     @Test
@@ -80,7 +80,7 @@ class FilmControllerTest {
                                 "\"duration\": 91," +
                                 "\"mpa\": {\"id\": 1}}"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.description").value("Description is required"));
+                .andExpect(jsonPath("$.description").value("Description is required."));
     }
 
     @Test
@@ -99,7 +99,7 @@ class FilmControllerTest {
                                 "\"mpa\": {\"id\": 1}}"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.description")
-                        .value("Description should be less 200 characters"));
+                        .value("Description should be less than 200 characters."));
     }
 
     @Test
@@ -129,7 +129,7 @@ class FilmControllerTest {
                                 "\"duration\": 91," +
                                 "\"mpa\": {\"id\": 1}}"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.releaseDate").value("Release is required"));
+                .andExpect(jsonPath("$.releaseDate").value("Release date is required."));
     }
 
     @Test
@@ -144,7 +144,7 @@ class FilmControllerTest {
                                 "\"mpa\": {\"id\": 1}}"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.releaseDate")
-                        .value("Movie should be released after 1895-12-28"));
+                        .value("Movie should be released after 1895-12-28."));
     }
 
     @Test
@@ -171,7 +171,7 @@ class FilmControllerTest {
                                 "\"mpa\": {\"id\": 1}}"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.duration")
-                        .value("Duration should be positive"));
+                        .value("Duration should be positive."));
     }
 
     @Test
@@ -185,7 +185,7 @@ class FilmControllerTest {
                                 "\"duration\": -1," +
                                 "\"mpa\": {\"id\": 1}}"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.duration").value("Duration should be positive"));
+                .andExpect(jsonPath("$.duration").value("Duration should be positive."));
     }
 
     @Test
