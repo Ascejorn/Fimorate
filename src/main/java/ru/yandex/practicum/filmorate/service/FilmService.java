@@ -26,13 +26,8 @@ public class FilmService {
     }
 
     public Film getFilmById(long id) {
-        Optional<Film> film = filmStorage.loadFilm(id);
-        if (film.isPresent()) {
-            log.debug("Loading film {}.", film.get());
-            return film.get();
-        } else {
-            throw new NotFoundException("User #" + id + " not found.");
-        }
+        return filmStorage.loadFilm(id)
+                .orElseThrow(() -> new NotFoundException("**Film** #" + id + " not found."));
     }
 
     public Film createNewFilm(Film film) {

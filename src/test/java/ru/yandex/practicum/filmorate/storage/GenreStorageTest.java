@@ -51,9 +51,9 @@ class GenreStorageTest {
                 Film.builder()
                         .name("New Film")
                         .description("Film description")
-                        .duration(122)
+                        .duration(122l)
                         .releaseDate(LocalDate.parse("2020-08-01"))
-                        .mpa(Mpa.builder().id(1).build())
+                        .mpa(Mpa.builder().id(1L).build())
                         .build()
         );
         List<Genre> testGenres = genreStorage.loadAllGenres().subList(0,3);

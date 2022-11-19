@@ -171,7 +171,7 @@ class FilmControllerTest {
                                 "\"mpa\": {\"id\": 1}}"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.duration")
-                        .value("Duration should be positive."));
+                        .value("Duration is required."));
     }
 
     @Test

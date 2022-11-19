@@ -36,7 +36,7 @@ public class Film extends Id {
 
     @NotNull(message = "Duration is required.", groups = {Create.class})
     @Positive(message = "Duration should be positive.", groups = {Create.class, Update.class})
-    private long duration;
+    private Long duration;
 
     @NotNull(message = "MPA rating is required.", groups = {Create.class})
     private Mpa mpa;
