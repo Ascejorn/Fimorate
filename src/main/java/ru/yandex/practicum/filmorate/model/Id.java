@@ -1,10 +1,14 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import ru.yandex.practicum.filmorate.validation.Create;
+import ru.yandex.practicum.filmorate.validation.Update;
 
-import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @EqualsAndHashCode
@@ -12,6 +16,6 @@ import javax.validation.constraints.Max;
 @Getter
 @SuperBuilder
 public abstract class Id {
-    @Max(value = 0, message = "У нового оюъекта не должно быть id.", groups = {Create.class})
-    private long id;
+    @NotNull(groups = {Update.class})
+    private Long id;
 }

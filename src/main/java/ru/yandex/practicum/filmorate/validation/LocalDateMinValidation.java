@@ -10,12 +10,12 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
 
-@Target( {FIELD, PARAMETER})
+@Target({FIELD, PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = LocalDateMinValidator.class)
 public @interface LocalDateMinValidation {
-    String message() default "Фильм должен быть выпущен после {value}";
+    String message() default "Movie should be released after {value}.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 
