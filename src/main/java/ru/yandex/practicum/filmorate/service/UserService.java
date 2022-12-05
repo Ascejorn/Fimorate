@@ -122,4 +122,8 @@ public class UserService {
     public boolean isNotExistLogin(String login) {
         return userStorage.isNotExistLogin(login);
     }
+
+    public void deleteUser(long userId){ //удаление User
+        userStorage.deleteUser(userId);
+    }
 }

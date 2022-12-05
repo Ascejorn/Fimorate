@@ -28,5 +28,6 @@ public interface UserStorage {
     boolean isNotExistEmail(String email);
 
     boolean isNotExistLogin(String login);
-}
 
+    void deleteUser(long userId); //удаление User
+}

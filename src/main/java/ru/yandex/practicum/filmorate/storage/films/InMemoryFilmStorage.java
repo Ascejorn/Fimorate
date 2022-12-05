@@ -80,6 +80,10 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .collect(Collectors.toList());
     }
 
+    public void deleteFilm(long filmId){ //удаление film
+        films.remove(filmId);
+    }
+
     private int loadLikes(long filmId) {
         return likes.get(filmId).size();
     }

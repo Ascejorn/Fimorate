@@ -103,4 +103,8 @@ public class FilmService {
         log.debug("Returning {} popular films.", popular.size());
         return popular;
     }
+
+    public void deleteFilm(long filmId){
+        filmStorage.deleteFilm(filmId);
+    }
 }

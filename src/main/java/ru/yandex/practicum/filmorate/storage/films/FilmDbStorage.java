@@ -137,6 +137,11 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, this::mapRow, count);
     }
 
+    public void deleteFilm(long filmId){
+        String sql = "DELETE FROM films WHERE id = ?";
+        jdbcTemplate.update(sql, filmId);
+    }
+
     private Film mapRow(ResultSet resultSet, long rowNum) throws SQLException {
         Mpa mpa = Mpa.builder().
                 id(resultSet.getLong("mpa_id"))
@@ -163,4 +168,3 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, new BeanPropertyRowMapper<>(Genre.class), id);
     }
 }
-

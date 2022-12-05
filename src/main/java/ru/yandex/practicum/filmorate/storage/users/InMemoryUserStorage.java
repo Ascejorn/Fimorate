@@ -85,4 +85,9 @@ public class InMemoryUserStorage implements UserStorage {
                 .map(User::getLogin)
                 .noneMatch(e -> e.equals(login));
     }
+
+    @Override
+    public void deleteUser(long userId){ // удаление user
+        users.remove(userId);
+    }
 }
