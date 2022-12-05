@@ -65,7 +65,7 @@ public class FilmController {
         return filmService.getPopularFilms(count);
     }
 
-    @DeleteMapping("/{filmId}") //удаление фильма
+    @DeleteMapping("/{filmId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteFilm(@PathVariable long filmId){
         filmService.deleteFilm(filmId);

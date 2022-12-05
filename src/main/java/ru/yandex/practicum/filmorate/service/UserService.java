@@ -123,7 +123,9 @@ public class UserService {
         return userStorage.isNotExistLogin(login);
     }
 
-    public void deleteUser(long userId){ //удаление User
+    public void deleteUser(long userId){
+        getUserById(userId);
         userStorage.deleteUser(userId);
+        log.debug("Delete {}.", userId);
     }
 }

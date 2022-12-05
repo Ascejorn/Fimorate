@@ -76,7 +76,7 @@ public class UserController {
         return userService.getCommonFriends(id, otherId);
     }
 
-    @DeleteMapping("/{userId}") //удаление User
+    @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteUser(@PathVariable long userId){
         userService.deleteUser(userId);

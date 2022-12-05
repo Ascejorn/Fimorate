@@ -29,5 +29,5 @@ public interface UserStorage {
 
     boolean isNotExistLogin(String login);
 
-    void deleteUser(long userId); //удаление User
+    void deleteUser(long userId);
 }

@@ -23,5 +23,5 @@ public interface FilmStorage {
 
     List<Film> loadPopularFilms(long count);
 
-    void deleteFilm(long filmId); //удаление film
+    void deleteFilm(long filmId);
 }
