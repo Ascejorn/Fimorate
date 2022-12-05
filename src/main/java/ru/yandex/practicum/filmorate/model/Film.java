@@ -42,4 +42,6 @@ public class Film extends Id {
     private Mpa mpa;
 
     private List<Genre> genres;
+
+    List<Director> directors;
 }
