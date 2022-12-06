@@ -120,6 +120,12 @@ public class FilmService {
         return popular;
     }
 
+    public void deleteFilm(long filmId) {
+        getFilmById(filmId);
+        filmStorage.deleteFilm(filmId);
+        log.debug("Deleting {} film.", filmId);
+    }
+
     public List<Film> getSortedFilmsOfDirector(long directorId, String sortBy) {
         directorService.getDirectorById(directorId);
         switch (sortBy) {
