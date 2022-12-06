@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.feeds.EventType;
+import ru.yandex.practicum.filmorate.storage.feeds.Operation;
 import ru.yandex.practicum.filmorate.storage.films.FilmStorage;
 
 import java.util.*;
@@ -99,6 +101,7 @@ public class FilmService {
             log.debug("Attempting to create an existing like for film #{} from user #{}.",  filmId, userId);
         } else {
             filmStorage.saveLikeFromUser(filmId, userId);
+            userService.saveFeed(userId, filmId, EventType.LIKE, Operation.ADD);
             log.debug("Creating like for film #{} from user #{}.",  filmId, userId);
         }
     }
@@ -109,6 +112,7 @@ public class FilmService {
         if (filmStorage.hasFilmLikeFromUser(filmId, userId)) {
             filmStorage.deleteLikeFromUser(filmId, userId);
             log.debug("Deleting like from film #{} from user #{}.",  filmId, userId);
+            userService.saveFeed(userId, filmId, EventType.LIKE, Operation.REMOVE);
         } else {
             log.debug("Attempting to delete a non-existent like for film #{} from user #{}", filmId, userId);
         }
