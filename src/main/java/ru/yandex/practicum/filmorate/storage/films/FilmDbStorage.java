@@ -218,5 +218,30 @@ public class FilmDbStorage implements FilmStorage {
                         "WHERE f.film_id = ?;";
         return jdbcTemplate.query(sqlQuery, new BeanPropertyRowMapper<>(Director.class), id);
     }
+
+    @Override
+    public List<Film> getCommonFilms(long id, long friendId){
+        String sqlQuery ="SELECT f.id, " +
+                        "f.name, " +
+                        "f.description, " +
+                        "f.release_date, " +
+                        "f.duration, " +
+                        "f.mpa_id, " +
+                        "m.name mpa " +
+                        "FROM films f " +
+                        "JOIN mpa m" +
+                        "    ON m.id = f.mpa_id " +
+                        "LEFT JOIN (SELECT film_id, " +
+                        "      COUNT(user_id) rating " +
+                        "      FROM likes " +
+                        "      GROUP BY film_id " +
+                        ") r ON f.id =  r.film_id " +
+                        "WHERE f.id IN (SELECT l.film_id FROM likes AS l" +
+                        " WHERE l.user_id = ? or l.user_id = ? " +
+                        " GROUP BY l.film_id HAVING Count(*)>1)"+
+                        "ORDER BY r.rating DESC;";
+
+        return jdbcTemplate.query(sqlQuery, this::mapRow,id,friendId);
+    };
 }
 
