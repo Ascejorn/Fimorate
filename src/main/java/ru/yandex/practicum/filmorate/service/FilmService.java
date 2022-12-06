@@ -141,4 +141,10 @@ public class FilmService {
                 throw new NotFoundException("Sorting not found.");
         }
     }
+
+    public List<Film> getCommonFilms(long userId, long friendId) {
+        List<Film> common = filmStorage.getCommonFilms(userId, friendId);
+        log.debug("Returning {} common films.", common.size());
+      return  common;
+    }
 }
