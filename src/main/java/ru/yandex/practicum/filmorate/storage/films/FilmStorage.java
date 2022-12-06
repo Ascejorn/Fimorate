@@ -28,4 +28,6 @@ public interface FilmStorage {
     List<Film> loadFilmsOfDirectorSortedByYears(long directorId);
 
     List<Film> loadFilmsOfDirectorSortedByLikes(long directorId);
+
+    List<Film> getCommonFilms(long userId, long friendId);
 }
