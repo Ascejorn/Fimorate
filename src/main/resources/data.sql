@@ -13,3 +13,4 @@ MERGE INTO genres (id, name)
            (5, 'Триллер'),
            (6, 'Боевик');
 
+
