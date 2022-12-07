@@ -21,7 +21,7 @@ public interface FilmStorage {
 
     boolean hasFilmLikeFromUser(long filmId, long userId);
 
-    List<Film> loadPopularFilms(long count);
+    List<Film> loadPopularFilms(long count, Long genreId, Integer year);
 
     void deleteFilm(long filmId);
 
