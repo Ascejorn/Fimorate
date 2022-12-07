@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.films;
 
-
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -58,7 +57,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public boolean hasFilmLikeFromUser(long filmId, long userId) {
-        Optional<Set<Long>> filmLikes =  Optional.ofNullable(likes.get(filmId));
+        Optional<Set<Long>> filmLikes = Optional.ofNullable(likes.get(filmId));
         return filmLikes.map(l -> l.contains(userId)).orElse(false);
     }
 
@@ -101,5 +100,10 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     private int loadLikes(long filmId) {
         return likes.get(filmId).size();
+    }
+
+    @Override
+    public List<Film> searchFilm(String query, String by) {
+        return null;
     }
 }
