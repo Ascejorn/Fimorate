@@ -37,17 +37,14 @@ public class FeedDbStorage implements FeedStorage {
                 "operation," +
                 "event_id," +
                 "entity_id " +
-                "FROM feeds WHERE user_id in ( " +
-                "SELECT f.friend_id " +
-                "FROM friends AS f " +
-                "WHERE f.user_id = ?)" +
-                " Order BY event_id;";
+                "FROM feeds WHERE user_id = ?" +
+                "ORDER BY event_id;";
         return  jdbcTemplate.query(sql, this::makeFeed,userId);
     }
 
     private Feed makeFeed(ResultSet resultSet, long rowNum) throws SQLException {
         return Feed.builder()
-                .timestamp(resultSet.getTimestamp("event_time").toInstant())
+                .timestamp(resultSet.getTimestamp("event_time").toInstant().toEpochMilli())
                 .userId(resultSet.getLong("user_id"))
                 .eventType(resultSet.getString("event_type"))
                 .operation(resultSet.getString("operation"))

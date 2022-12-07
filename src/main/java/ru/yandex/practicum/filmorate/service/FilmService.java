@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.feeds.EventType;
+import ru.yandex.practicum.filmorate.storage.feeds.Operation;
 import ru.yandex.practicum.filmorate.storage.films.FilmStorage;
 
 import java.util.List;
@@ -86,6 +88,7 @@ public class FilmService {
         } else {
             filmStorage.saveLikeFromUser(filmId, userId);
             log.debug("Creating like for film #{} from user #{}.", filmId, userId);
+            userService.saveFeed(userId, filmId, EventType.LIKE, Operation.ADD);
         }
     }
 
@@ -95,6 +98,7 @@ public class FilmService {
         if (filmStorage.hasFilmLikeFromUser(filmId, userId)) {
             filmStorage.deleteLikeFromUser(filmId, userId);
             log.debug("Deleting like from film #{} from user #{}.", filmId, userId);
+            userService.saveFeed(userId, filmId, EventType.LIKE, Operation.REMOVE);
         } else {
             log.debug("Attempting to delete a non-existent like for film #{} from user #{}", filmId, userId);
         }

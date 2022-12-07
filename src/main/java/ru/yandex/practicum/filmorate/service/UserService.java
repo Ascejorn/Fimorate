@@ -138,8 +138,11 @@ public class UserService {
     }
     public void saveFeed(long id, long entityId, EventType eventType, Operation operation){
         feedStorage.saveFeed(id, entityId, eventType, operation);
+        log.debug("Event saved: User #{} {} {} #{}.",id,operation.toString().toLowerCase(), eventType.toString().toLowerCase(), entityId );
     }
     public  List<Feed> getNewsFeed(long userId) {
-        return feedStorage.getNewsFeed(userId);
+        List<Feed> feeds = feedStorage.getNewsFeed(userId);
+        log.debug("Loading {} events.", feeds.size());
+        return feeds;
     }
 }
