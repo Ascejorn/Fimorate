@@ -15,6 +15,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,7 +26,7 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate){
+    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -226,6 +227,45 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> searchFilm(String query, String by) {
+        String sqlSearchPopularFilms = "SELECT f.*, m.name AS mpa, COUNT(fl.user_id) AS rating FROM films AS f " +
+                "LEFT JOIN mpa m ON m.id = f.mpa_id " +
+                "LEFT JOIN likes AS fl ON fl.film_id = f.id " +
+                "WHERE f.id IN ({}) " +
+                "GROUP BY f.id " +
+                "ORDER BY rating DESC";
+
+        String subSqlTitle = "SELECT id FROM films WHERE name ILIKE CONCAT ('%', ?1, '%')";
+
+        String subSqlDirector = "SELECT f.id AS id FROM films AS f " +
+                "INNER JOIN films_directors AS fd ON fd.film_id = f.id " +
+                "INNER JOIN directors AS d ON d.id = fd.director_id " +
+                "WHERE d.name ILIKE CONCAT ('%', ?1, '%')";
+
+        String subSqlTitleDirector = String.format("%s UNION %s", subSqlTitle, subSqlDirector);
+
+        String sqlQuery;
+
+        switch (by) {
+            case "title":
+                sqlQuery = sqlSearchPopularFilms.replace("{}", subSqlTitle);
+                break;
+            case "director":
+                sqlQuery = sqlSearchPopularFilms.replace("{}", subSqlDirector);
+                break;
+            case "title,director":
+            case "director,title":
+                sqlQuery = sqlSearchPopularFilms.replace("{}", subSqlTitleDirector);
+                break;
+            default:
+                return new ArrayList<>();
+        }
+
+        return jdbcTemplate.query(sqlQuery, this::mapRow, query);
+    }
+
+
+    @Override
     public List<Film> getCommonFilms(long id, long friendId){
         String sqlQuery ="SELECT f.id, " +
                 "f.name, " +
@@ -248,5 +288,5 @@ public class FilmDbStorage implements FilmStorage {
                 "ORDER BY r.rating DESC;";
 
         return jdbcTemplate.query(sqlQuery, this::mapRow,id,friendId);
-    };
+    }
 }
