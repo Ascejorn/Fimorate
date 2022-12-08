@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.validation.Create;
 import ru.yandex.practicum.filmorate.validation.Update;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController

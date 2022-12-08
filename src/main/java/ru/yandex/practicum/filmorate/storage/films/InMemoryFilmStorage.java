@@ -103,6 +103,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> getRecommendation(long id){
+        return new ArrayList<>();
+        
+    }
+    
     public List<Film> searchFilm(String query, String by) {
         return null;
     }

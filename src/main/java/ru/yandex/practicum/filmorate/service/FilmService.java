@@ -134,6 +134,13 @@ public class FilmService {
         }
     }
 
+    public List<Film> getRecommendation(long id){
+        userService.getUserById(id);
+        List<Film> recommendationFilm = filmStorage.getRecommendation(id);
+        log.debug("Recommendation {} films.", recommendationFilm.size());
+        return recommendationFilm;
+    }
+
     public List<Film> getCommonFilms(long userId, long friendId) {
         List<Film> common = filmStorage.getCommonFilms(userId, friendId);
         log.debug("Returning {} common films.", common.size());
