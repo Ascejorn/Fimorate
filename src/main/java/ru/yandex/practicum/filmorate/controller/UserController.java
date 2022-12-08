@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.validation.Create;
 import ru.yandex.practicum.filmorate.validation.Update;
@@ -17,10 +18,12 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
+    private final FeedService feedService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, FeedService feedService) {
         this.userService = userService;
+        this.feedService = feedService;
     }
 
     @GetMapping
@@ -86,6 +89,7 @@ public class UserController {
     @GetMapping("/{id}/feed")
     @ResponseStatus(HttpStatus.OK)
     public List<Feed> getNewsFeed(@PathVariable long id ) {
-        return userService.getNewsFeed(id);
+        return feedService.getNewsFeed(id);
     }
+
 }

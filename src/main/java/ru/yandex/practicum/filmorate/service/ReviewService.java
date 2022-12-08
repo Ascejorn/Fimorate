@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.feeds.EventType;
+import ru.yandex.practicum.filmorate.storage.feeds.Operation;
 import ru.yandex.practicum.filmorate.storage.films.ReviewStorage;
 
 import java.util.List;
@@ -13,10 +15,12 @@ import java.util.List;
 @Service
 public class ReviewService {
     private final ReviewStorage reviewStorage;
+    private final FeedService feedService;
 
     @Autowired
-    public ReviewService(ReviewStorage reviewStorage) {
+    public ReviewService(ReviewStorage reviewStorage, FeedService feedService) {
         this.reviewStorage = reviewStorage;
+        this.feedService = feedService;
     }
 
     public Review getReviewById(long id) {
@@ -28,6 +32,7 @@ public class ReviewService {
         reviewStorage.updateReview(review);
         Review savedReview = getReviewById(review.getReviewId());
         log.debug("Updating view {}.", savedReview);
+        feedService.saveFeed(savedReview.getUserId(), savedReview.getReviewId(), EventType.REVIEW, Operation.UPDATE);
         return savedReview;
     }
 
@@ -36,7 +41,7 @@ public class ReviewService {
 
         Review savedReview = getReviewById(reviewId);
         log.debug("Creating new review {}.", savedReview);
-
+        feedService.saveFeed(savedReview.getUserId(), savedReview.getReviewId(), EventType.REVIEW, Operation.ADD);
         return savedReview;
     }
 
@@ -72,6 +77,8 @@ public class ReviewService {
     }
 
     public void deleteReview(long reviewId) {
+        Review review = getReviewById(reviewId);
         reviewStorage.deleteReview(reviewId);
+        feedService.saveFeed(review.getUserId(), review.getReviewId(), EventType.REVIEW, Operation.REMOVE);
     }
 }

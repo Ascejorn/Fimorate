@@ -20,6 +20,8 @@ public class FilmService {
     private final UserService userService;
     private final GenreService genreService;
     private final DirectorService directorService;
+    private final FeedService feedService;
+
 
     public Film getFilmById(long id) {
         return filmStorage.loadFilm(id)
@@ -88,7 +90,7 @@ public class FilmService {
         } else {
             filmStorage.saveLikeFromUser(filmId, userId);
             log.debug("Creating like for film #{} from user #{}.", filmId, userId);
-            userService.saveFeed(userId, filmId, EventType.LIKE, Operation.ADD);
+            feedService.saveFeed(userId, filmId, EventType.LIKE, Operation.ADD);
         }
     }
 
@@ -98,7 +100,7 @@ public class FilmService {
         if (filmStorage.hasFilmLikeFromUser(filmId, userId)) {
             filmStorage.deleteLikeFromUser(filmId, userId);
             log.debug("Deleting like from film #{} from user #{}.", filmId, userId);
-            userService.saveFeed(userId, filmId, EventType.LIKE, Operation.REMOVE);
+            feedService.saveFeed(userId, filmId, EventType.LIKE, Operation.REMOVE);
         } else {
             log.debug("Attempting to delete a non-existent like for film #{} from user #{}", filmId, userId);
         }
@@ -131,7 +133,6 @@ public class FilmService {
                 throw new NotFoundException("Sorting not found.");
         }
     }
-
 
     public List<Film> getCommonFilms(long userId, long friendId) {
         List<Film> common = filmStorage.getCommonFilms(userId, friendId);
