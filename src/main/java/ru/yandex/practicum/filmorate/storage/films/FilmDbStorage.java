@@ -116,7 +116,16 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> loadPopularFilms(long count) {
+    public List<Film> loadPopularFilms(long count, Long genreId, Integer year) {
+
+        String sqlYear = "SELECT * FROM films WHERE YEAR(release_date) = ?";
+
+        String sqlGenre = "SELECT f.* FROM films AS f JOIN films_genres AS fg ON fg.film_id = f.id AND fg.genre_id = ?";
+
+        String sqlGenreAndYear = "SELECT f.* FROM films AS f " +
+                "JOIN films_genres AS fg ON fg.genre_id = ? " +
+                "GROUP BY f.id HAVING YEAR(f.release_date) = ?";
+
         String sqlQuery =
                 "SELECT f.id, " +
                         "f.name, " +
@@ -125,7 +134,7 @@ public class FilmDbStorage implements FilmStorage {
                         "f.duration, " +
                         "f.mpa_id, " +
                         "m.name mpa " +
-                        "FROM films f " +
+                        "FROM ({}) f " +
                         "JOIN mpa m" +
                         "    ON m.id = f.mpa_id " +
                         "LEFT JOIN (SELECT film_id, " +
@@ -134,8 +143,25 @@ public class FilmDbStorage implements FilmStorage {
                         "      GROUP BY film_id " +
                         ") r ON f.id =  r.film_id " +
                         "ORDER BY r.rating DESC " +
-                        "LIMIT ?;";
-        return jdbcTemplate.query(sqlQuery, this::mapRow, count);
+                        "LIMIT ?";
+
+        Object[] sqlParams;
+
+        if (genreId != null && year != null) {
+            sqlQuery = sqlQuery.replace("{}", sqlGenreAndYear);
+            sqlParams = new Object[] {genreId, year, count};
+        } else if (genreId != null) {
+            sqlQuery = sqlQuery.replace("{}", sqlGenre);
+            sqlParams = new Object[] {genreId, count};
+        } else if (year != null) {
+            sqlQuery = sqlQuery.replace("{}", sqlYear);
+            sqlParams = new Object[] {year, count};
+        } else {
+            sqlQuery = sqlQuery.replace("({})", "films");
+            sqlParams = new Object[] {count};
+        }
+
+        return jdbcTemplate.query(sqlQuery, this::mapRow, sqlParams);
     }
 
     public void deleteFilm(long filmId){

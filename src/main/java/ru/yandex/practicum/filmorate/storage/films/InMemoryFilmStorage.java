@@ -62,7 +62,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> loadPopularFilms(long count) {
+    public List<Film> loadPopularFilms(long count, Long genreId, Integer year) {
         return new ArrayList<>(films.values()).stream()
                 .sorted((f1, f2) -> {
                     if (loadLikes(f1.getId()) == 0 && loadLikes(f1.getId()) == 0) {

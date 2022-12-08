@@ -62,11 +62,3 @@ CREATE TABLE IF NOT EXISTS films_directors (
     director_id BIGINT REFERENCES directors (id) ON DELETE CASCADE,
     UNIQUE  (film_id, director_id)
 );
-CREATE TABLE IF NOT EXISTS feeds (
-    event_id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    event_time timestamp,
-    user_id BIGINT REFERENCES users (id),
-    event_type VARCHAR(16),
-    operation VARCHAR(16),
-    entity_id BIGINT
-);

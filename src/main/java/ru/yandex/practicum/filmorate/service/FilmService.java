@@ -104,8 +104,8 @@ public class FilmService {
         }
     }
 
-    public List<Film> getPopularFilms(long count) {
-        List<Film> popular = filmStorage.loadPopularFilms(count);
+    public List<Film> getPopularFilms(long count, Long genreId, Integer year) {
+        List<Film> popular = filmStorage.loadPopularFilms(count, genreId, year);
         log.debug("Returning {} popular films.", popular.size());
         return popular;
     }
