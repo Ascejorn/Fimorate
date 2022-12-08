@@ -97,4 +97,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     private int loadLikes(long filmId) {
         return likes.get(filmId).size();
     }
+
+    @Override
+    public List<Film> getRecommendation(long id){
+        return new ArrayList<>();
+    }
 }

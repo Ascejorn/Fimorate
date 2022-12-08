@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -15,9 +16,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Repository("filmStorage")
 public class FilmDbStorage implements FilmStorage {
@@ -140,6 +139,25 @@ public class FilmDbStorage implements FilmStorage {
     public void deleteFilm(long filmId){
         String sql = "DELETE FROM films WHERE id = ?";
         jdbcTemplate.update(sql, filmId);
+    }
+
+    public List<Film> getRecommendation(long id){
+        String sql =
+                "SELECT fl.id, fl.name, fl.description, fl.release_date, fl.duration, fl.mpa_id, m.name mpa" +
+                        " FROM films fl JOIN mpa m ON m.id = fl.mpa_id " +
+                        " WHERE fl.id IN (" +
+                        "       SELECT DISTINCT l.film_id FROM likes  l " +
+                        " WHERE l.user_id IN (" +
+                        "       SELECT l.user_id FROM likes AS l" +
+                        " WHERE l.film_id IN (" +
+                        "       SELECT f.id FROM films AS f" +
+                        " RIGHT JOIN likes  l ON f.id = l.film_id" +
+                        " WHERE l.user_id = ? )" +
+                        "   AND l.user_id <> ?)" +
+                        "   AND l.film_id NOT IN " +
+                        "       (SELECT l.film_id FROM likes  l" +
+                        " WHERE l.user_id = ?))";
+        return jdbcTemplate.query(sql, this::mapRow, id, id, id);
     }
 
     @Override

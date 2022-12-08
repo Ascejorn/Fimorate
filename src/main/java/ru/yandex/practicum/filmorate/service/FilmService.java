@@ -141,4 +141,11 @@ public class FilmService {
                 throw new NotFoundException("Sorting not found.");
         }
     }
+
+    public List<Film> getRecommendation(long id){
+        userService.getUserById(id);
+        List<Film> recommendationFilm = filmStorage.getRecommendation(id);
+        log.debug("Recommendation {} films.", recommendationFilm.size());
+        return recommendationFilm;
+    }
 }
