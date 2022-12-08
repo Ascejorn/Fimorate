@@ -43,5 +43,5 @@ public class Film extends Id {
 
     private List<Genre> genres;
 
-    List<Director> directors;
+    private List<Director> directors;
 }

@@ -1,37 +1,27 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.feeds.EventType;
+import ru.yandex.practicum.filmorate.storage.feeds.Operation;
 import ru.yandex.practicum.filmorate.storage.films.FilmStorage;
 
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserService userService;
     private final GenreService genreService;
-
     private final DirectorService directorService;
+    private final FeedService feedService;
 
-    @Autowired
-    public FilmService(
-            FilmStorage filmStorage,
-            UserService userService,
-            GenreService genreService,
-            DirectorService directorService
-    ) {
-        this.filmStorage = filmStorage;
-        this.userService = userService;
-        this.genreService = genreService;
-        this.directorService = directorService;
-    }
 
     public Film getFilmById(long id) {
         return filmStorage.loadFilm(id)
@@ -96,10 +86,11 @@ public class FilmService {
         getFilmById(filmId);
         userService.getUserById(userId);
         if (filmStorage.hasFilmLikeFromUser(filmId, userId)) {
-            log.debug("Attempting to create an existing like for film #{} from user #{}.",  filmId, userId);
+            log.debug("Attempting to create an existing like for film #{} from user #{}.", filmId, userId);
         } else {
             filmStorage.saveLikeFromUser(filmId, userId);
-            log.debug("Creating like for film #{} from user #{}.",  filmId, userId);
+            log.debug("Creating like for film #{} from user #{}.", filmId, userId);
+            feedService.saveFeed(userId, filmId, EventType.LIKE, Operation.ADD);
         }
     }
 
@@ -108,14 +99,15 @@ public class FilmService {
         userService.getUserById(userId);
         if (filmStorage.hasFilmLikeFromUser(filmId, userId)) {
             filmStorage.deleteLikeFromUser(filmId, userId);
-            log.debug("Deleting like from film #{} from user #{}.",  filmId, userId);
+            log.debug("Deleting like from film #{} from user #{}.", filmId, userId);
+            feedService.saveFeed(userId, filmId, EventType.LIKE, Operation.REMOVE);
         } else {
             log.debug("Attempting to delete a non-existent like for film #{} from user #{}", filmId, userId);
         }
     }
 
-    public List<Film> getPopularFilms(long count) {
-        List<Film> popular = filmStorage.loadPopularFilms(count);
+    public List<Film> getPopularFilms(long count, Long genreId, Integer year) {
+        List<Film> popular = filmStorage.loadPopularFilms(count, genreId, year);
         log.debug("Returning {} popular films.", popular.size());
         return popular;
     }
@@ -147,5 +139,15 @@ public class FilmService {
         List<Film> recommendationFilm = filmStorage.getRecommendation(id);
         log.debug("Recommendation {} films.", recommendationFilm.size());
         return recommendationFilm;
+    }
+
+    public List<Film> getCommonFilms(long userId, long friendId) {
+        List<Film> common = filmStorage.getCommonFilms(userId, friendId);
+        log.debug("Returning {} common films.", common.size());
+        return common;
+    }
+
+    public List<Film> searchFilm(String query, String by) {
+        return filmStorage.searchFilm(query, by);
     }
 }

@@ -17,6 +17,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Repository("filmStorage")
 public class FilmDbStorage implements FilmStorage {
@@ -24,7 +28,7 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate){
+    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -114,7 +118,16 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> loadPopularFilms(long count) {
+    public List<Film> loadPopularFilms(long count, Long genreId, Integer year) {
+
+        String sqlYear = "SELECT * FROM films WHERE YEAR(release_date) = ?";
+
+        String sqlGenre = "SELECT f.* FROM films AS f JOIN films_genres AS fg ON fg.film_id = f.id AND fg.genre_id = ?";
+
+        String sqlGenreAndYear = "SELECT f.* FROM films AS f " +
+                "JOIN films_genres AS fg ON fg.genre_id = ? " +
+                "GROUP BY f.id HAVING YEAR(f.release_date) = ?";
+
         String sqlQuery =
                 "SELECT f.id, " +
                         "f.name, " +
@@ -123,7 +136,7 @@ public class FilmDbStorage implements FilmStorage {
                         "f.duration, " +
                         "f.mpa_id, " +
                         "m.name mpa " +
-                        "FROM films f " +
+                        "FROM ({}) f " +
                         "JOIN mpa m" +
                         "    ON m.id = f.mpa_id " +
                         "LEFT JOIN (SELECT film_id, " +
@@ -132,8 +145,25 @@ public class FilmDbStorage implements FilmStorage {
                         "      GROUP BY film_id " +
                         ") r ON f.id =  r.film_id " +
                         "ORDER BY r.rating DESC " +
-                        "LIMIT ?;";
-        return jdbcTemplate.query(sqlQuery, this::mapRow, count);
+                        "LIMIT ?";
+
+        Object[] sqlParams;
+
+        if (genreId != null && year != null) {
+            sqlQuery = sqlQuery.replace("{}", sqlGenreAndYear);
+            sqlParams = new Object[] {genreId, year, count};
+        } else if (genreId != null) {
+            sqlQuery = sqlQuery.replace("{}", sqlGenre);
+            sqlParams = new Object[] {genreId, count};
+        } else if (year != null) {
+            sqlQuery = sqlQuery.replace("{}", sqlYear);
+            sqlParams = new Object[] {year, count};
+        } else {
+            sqlQuery = sqlQuery.replace("({})", "films");
+            sqlParams = new Object[] {count};
+        }
+
+        return jdbcTemplate.query(sqlQuery, this::mapRow, sqlParams);
     }
 
     public void deleteFilm(long filmId){
@@ -241,5 +271,69 @@ public class FilmDbStorage implements FilmStorage {
                         "ON f.director_id = d.id " +
                         "WHERE f.film_id = ?;";
         return jdbcTemplate.query(sqlQuery, new BeanPropertyRowMapper<>(Director.class), id);
+    }
+
+    @Override
+    public List<Film> searchFilm(String query, String by) {
+        String sqlSearchPopularFilms = "SELECT f.*, m.name AS mpa, COUNT(fl.user_id) AS rating FROM films AS f " +
+                "LEFT JOIN mpa m ON m.id = f.mpa_id " +
+                "LEFT JOIN likes AS fl ON fl.film_id = f.id " +
+                "WHERE f.id IN ({}) " +
+                "GROUP BY f.id " +
+                "ORDER BY rating DESC";
+
+        String subSqlTitle = "SELECT id FROM films WHERE name ILIKE CONCAT ('%', ?1, '%')";
+
+        String subSqlDirector = "SELECT f.id AS id FROM films AS f " +
+                "INNER JOIN films_directors AS fd ON fd.film_id = f.id " +
+                "INNER JOIN directors AS d ON d.id = fd.director_id " +
+                "WHERE d.name ILIKE CONCAT ('%', ?1, '%')";
+
+        String subSqlTitleDirector = String.format("%s UNION %s", subSqlTitle, subSqlDirector);
+
+        String sqlQuery;
+
+        switch (by) {
+            case "title":
+                sqlQuery = sqlSearchPopularFilms.replace("{}", subSqlTitle);
+                break;
+            case "director":
+                sqlQuery = sqlSearchPopularFilms.replace("{}", subSqlDirector);
+                break;
+            case "title,director":
+            case "director,title":
+                sqlQuery = sqlSearchPopularFilms.replace("{}", subSqlTitleDirector);
+                break;
+            default:
+                return new ArrayList<>();
+        }
+
+        return jdbcTemplate.query(sqlQuery, this::mapRow, query);
+    }
+
+
+    @Override
+    public List<Film> getCommonFilms(long id, long friendId){
+        String sqlQuery ="SELECT f.id, " +
+                "f.name, " +
+                "f.description, " +
+                "f.release_date, " +
+                "f.duration, " +
+                "f.mpa_id, " +
+                "m.name mpa " +
+                "FROM films f " +
+                "JOIN mpa m" +
+                "    ON m.id = f.mpa_id " +
+                "LEFT JOIN (SELECT film_id, " +
+                "      COUNT(user_id) rating " +
+                "      FROM likes " +
+                "      GROUP BY film_id " +
+                ") r ON f.id =  r.film_id " +
+                "WHERE f.id IN (SELECT l.film_id FROM likes AS l" +
+                " WHERE l.user_id = ? or l.user_id = ? " +
+                " GROUP BY l.film_id HAVING Count(*)>1)"+
+                "ORDER BY r.rating DESC;";
+
+        return jdbcTemplate.query(sqlQuery, this::mapRow,id,friendId);
     }
 }

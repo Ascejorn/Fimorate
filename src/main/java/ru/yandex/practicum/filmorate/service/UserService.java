@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.feeds.EventType;
+import ru.yandex.practicum.filmorate.storage.feeds.Operation;
 import ru.yandex.practicum.filmorate.storage.users.FriendshipStatus;
 import ru.yandex.practicum.filmorate.storage.users.UserStorage;
 
@@ -16,10 +18,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserStorage userStorage;
+    private final FeedService feedService;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(UserStorage userStorage, FeedService feedService) {
         this.userStorage = userStorage;
+        this.feedService = feedService;
     }
 
     public User getUserById(long id) {
@@ -72,6 +76,7 @@ public class UserService {
         } else {
             userStorage.saveFriendshipRequest(userId, friendId, FriendshipStatus.REQUEST);
             log.debug("Creating friendship request for user #{} from user #{}.",  userId, friendId);
+            feedService.saveFeed(userId, friendId, EventType.FRIEND, Operation.ADD);
         }
     }
 
@@ -96,6 +101,7 @@ public class UserService {
         if (userStorage.isExistFriendship(userId, friendId)) {
             userStorage.deleteFriendshipRequest(userId, friendId);
             log.debug("User #{} refused friendship request from user #{}.", userId, friendId);
+            feedService.saveFeed(userId, friendId, EventType.FRIEND, Operation.REMOVE);
         } else {
             log.debug("Attempting to refuse a non-existent request from user #{} to user #{}.", friendId, userId);
         }
@@ -128,4 +134,5 @@ public class UserService {
         userStorage.deleteUser(userId);
         log.debug("Delete {}.", userId);
     }
+
 }

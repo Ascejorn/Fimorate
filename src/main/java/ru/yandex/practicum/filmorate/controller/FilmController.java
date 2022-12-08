@@ -61,8 +61,12 @@ public class FilmController {
 
     @GetMapping("/popular")
     @ResponseStatus(HttpStatus.OK)
-    public List<Film> getPopularFilm(@RequestParam(required = false, defaultValue = "10") long count) {
-        return filmService.getPopularFilms(count);
+    public List<Film> getPopularFilm(
+            @RequestParam(required = false, defaultValue = "10") long count,
+            @RequestParam(required = false) Long genreId,
+            @RequestParam(required = false) Integer year
+    ) {
+        return filmService.getPopularFilms(count, genreId, year);
     }
 
     @DeleteMapping("/{filmId}")
@@ -76,4 +80,18 @@ public class FilmController {
     public List<Film> getFilmsByDirectorId(@PathVariable long directorId, @RequestParam String sortBy) {
         return filmService.getSortedFilmsOfDirector(directorId, sortBy.toUpperCase());
     }
+
+    @GetMapping("/common")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Film> getCommonFilms(@RequestParam long userId, @RequestParam long friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
+
+    @GetMapping("/search")
+    public List<Film> searchFilm(
+            @RequestParam("query") String query, @RequestParam(value = "by", defaultValue = "title") String by
+    ) {
+        return filmService.searchFilm(query, by);
+    }
 }
+
