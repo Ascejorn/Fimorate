@@ -15,19 +15,19 @@ import javax.validation.constraints.NotNull;
 @SuperBuilder
 public class Review {
 
-    @NotNull(message = "Review id is required", groups = {Update.class})
+    @NotNull(message = "Review id is required.", groups = {Update.class})
     private Long reviewId;
 
-    @NotNull(message = "Film id is required", groups = {Create.class})
+    @NotNull(message = "Film id is required.", groups = {Create.class})
     private Long filmId;
 
-    @NotNull(message = "User id is required", groups = {Create.class})
+    @NotNull(message = "User id is required.", groups = {Create.class})
     private Long userId;
 
-    @NotNull(message = "Field 'is positive' is required", groups = {Create.class})
+    @NotNull(message = "Field 'is positive' is required.", groups = {Create.class})
     private Boolean isPositive;
 
-    @NotNull(message = "Content is required", groups = {Create.class})
+    @NotNull(message = "Content is required.", groups = {Create.class})
     private String content;
 
     private int useful;

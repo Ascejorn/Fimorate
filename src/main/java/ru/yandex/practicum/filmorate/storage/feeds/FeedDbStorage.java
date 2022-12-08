@@ -23,8 +23,8 @@ public class FeedDbStorage implements FeedStorage {
                 .eventId(resultSet.getLong("event_id"))
                 .entityId(resultSet.getLong("entity_id"))
                 .build();
-
     }
+
     @Autowired
     public FeedDbStorage(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
@@ -40,6 +40,7 @@ public class FeedDbStorage implements FeedStorage {
                 "VALUES (?, ?, ?, ?, ?);";
         jdbcTemplate.update(sqlQuery, Instant.now(), id, eventType.name(), operation.name(), entityId);
     }
+
     @Override
     public List<Feed> getNewsFeed(long userId){
         String sql = "SELECT event_time," +
@@ -52,7 +53,4 @@ public class FeedDbStorage implements FeedStorage {
                 "ORDER BY event_id;";
         return  jdbcTemplate.query(sql, this::makeFeed,userId);
     }
-
-
-
 }

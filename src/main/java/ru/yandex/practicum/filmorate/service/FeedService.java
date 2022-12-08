@@ -18,9 +18,10 @@ public class FeedService {
         this.feedStorage = feedStorage;
     }
 
-    public void saveFeed(long id, long entityId, EventType eventType, Operation operation){
+    public void saveFeed(long id, long entityId, EventType eventType, Operation operation) {
         feedStorage.saveFeed(id, entityId, eventType, operation);
-        log.debug("Event saved: User #{} {} {} #{}.",id,operation.toString().toLowerCase(), eventType.toString().toLowerCase(), entityId );
+        log.debug("Event saved: User #{} {} {} #{}.",id, operation.toString().toLowerCase(),
+                eventType.toString().toLowerCase(), entityId);
     }
     public List<Feed> getNewsFeed(long userId) {
         List<Feed> feeds = feedStorage.getNewsFeed(userId);

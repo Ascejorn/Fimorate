@@ -91,5 +91,4 @@ public class UserController {
     public List<Feed> getNewsFeed(@PathVariable long id ) {
         return feedService.getNewsFeed(id);
     }
-
 }

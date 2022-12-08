@@ -9,11 +9,10 @@ import lombok.experimental.SuperBuilder;
 @ToString
 @SuperBuilder
 public class Feed {
-    Long timestamp;
-    Long userId;
-    String eventType;
-    String operation;
-    Long eventId;
-    Long entityId;
-
+    private Long timestamp;
+    private Long userId;
+    private String eventType;
+    private String operation;
+    private Long eventId;
+    private Long entityId;
 }

@@ -31,7 +31,8 @@ public class ReviewDbStorage implements ReviewStorage {
         String sqlQuery =
                 "SELECT  id ,r.film_id, r.user_id, " +
                         "r.is_positive, r.content, " +
-                        "COALESCE(SUM(CASE WHEN rr.useful THEN 1 WHEN rr.USEFUL = false THEN -1 ELSE 0 END), 0) as useful " +
+                        "COALESCE(SUM(CASE WHEN rr.useful THEN 1 WHEN rr.USEFUL = false THEN -1 ELSE 0 END)," +
+                        " 0) as useful " +
                         "FROM reviews r " +
                         "LEFT JOIN review_rating rr" +
                         "  ON r.id = rr.review_id " +
@@ -52,7 +53,6 @@ public class ReviewDbStorage implements ReviewStorage {
                 "SELECT id " +
                 "FROM FILMS " +
                 "WHERE id = ?)";
-
 
         if (jdbcTemplate.queryForObject(sqlQueryCheckData, Integer.class, review.getUserId(), review.getFilmId()) != 2) {
             throw new NotFoundException("film or user not found");
@@ -163,6 +163,4 @@ public class ReviewDbStorage implements ReviewStorage {
                 .isPositive(resultSet.getBoolean("is_positive"))
                 .build();
     }
-
-
 }

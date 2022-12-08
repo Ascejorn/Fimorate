@@ -38,7 +38,6 @@ public class ReviewService {
 
     public Review createNewReview(Review review) {
         long reviewId = reviewStorage.saveReview(review);
-
         Review savedReview = getReviewById(reviewId);
         log.debug("Creating new review {}.", savedReview);
         feedService.saveFeed(savedReview.getUserId(), savedReview.getReviewId(), EventType.REVIEW, Operation.ADD);
