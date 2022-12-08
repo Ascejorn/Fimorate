@@ -123,10 +123,4 @@ public class UserDbStorage implements UserStorage {
         int user = jdbcTemplate.queryForObject(sqlQuery, Integer.class, login);
         return user == 0;
     }
-
-    @Override
-    public void deleteUser(long userId) {
-        String sql = "DELETE FROM users WHERE id = ? ";
-        jdbcTemplate.update(sql, userId);
-    }
 }
