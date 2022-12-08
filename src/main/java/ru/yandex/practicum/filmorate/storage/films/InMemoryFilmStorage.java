@@ -80,7 +80,26 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .collect(Collectors.toList());
     }
 
+    public void deleteFilm(long filmId) { 
+        films.remove(filmId);
+        
+    }
+    @Override
+    public List<Film> loadFilmsOfDirectorSortedByYears(long directorId) {
+        return null;
+    }
+
+    @Override
+    public List<Film> loadFilmsOfDirectorSortedByLikes(long directorId) {
+        return null;
+    }
+
     private int loadLikes(long filmId) {
         return likes.get(filmId).size();
+    }
+
+    @Override
+    public List<Film> getRecommendation(long id){
+        return new ArrayList<>();
     }
 }

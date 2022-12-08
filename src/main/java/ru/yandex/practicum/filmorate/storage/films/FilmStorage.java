@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.films;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +24,11 @@ public interface FilmStorage {
 
     List<Film> loadPopularFilms(long count);
 
+    void deleteFilm(long filmId);
+
+    List<Film> loadFilmsOfDirectorSortedByYears(long directorId);
+
+    List<Film> loadFilmsOfDirectorSortedByLikes(long directorId);
+
+    List<Film> getRecommendation(long id);
 }
