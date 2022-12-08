@@ -14,6 +14,17 @@ import java.util.List;
 public class FeedDbStorage implements FeedStorage {
     private final JdbcTemplate jdbcTemplate;
 
+    private Feed makeFeed(ResultSet resultSet, long rowNum) throws SQLException {
+        return Feed.builder()
+                .timestamp(resultSet.getTimestamp("event_time").toInstant().toEpochMilli())
+                .userId(resultSet.getLong("user_id"))
+                .eventType(resultSet.getString("event_type"))
+                .operation(resultSet.getString("operation"))
+                .eventId(resultSet.getLong("event_id"))
+                .entityId(resultSet.getLong("entity_id"))
+                .build();
+
+    }
     @Autowired
     public FeedDbStorage(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
@@ -42,16 +53,6 @@ public class FeedDbStorage implements FeedStorage {
         return  jdbcTemplate.query(sql, this::makeFeed,userId);
     }
 
-    private Feed makeFeed(ResultSet resultSet, long rowNum) throws SQLException {
-        return Feed.builder()
-                .timestamp(resultSet.getTimestamp("event_time").toInstant().toEpochMilli())
-                .userId(resultSet.getLong("user_id"))
-                .eventType(resultSet.getString("event_type"))
-                .operation(resultSet.getString("operation"))
-                .eventId(resultSet.getLong("event_id"))
-                .entityId(resultSet.getLong("entity_id"))
-                .build();
 
-    }
 
 }

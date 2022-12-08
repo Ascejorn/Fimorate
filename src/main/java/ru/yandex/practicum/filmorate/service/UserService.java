@@ -4,10 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.feeds.EventType;
-import ru.yandex.practicum.filmorate.storage.feeds.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.feeds.Operation;
 import ru.yandex.practicum.filmorate.storage.users.FriendshipStatus;
 import ru.yandex.practicum.filmorate.storage.users.UserStorage;
@@ -20,12 +18,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserStorage userStorage;
-    private final FeedStorage feedStorage;
+    private final FeedService feedService;
 
     @Autowired
-    public UserService(UserStorage userStorage, FeedStorage feedStorage) {
+    public UserService(UserStorage userStorage, FeedService feedService) {
         this.userStorage = userStorage;
-        this.feedStorage = feedStorage;
+        this.feedService = feedService;
     }
 
     public User getUserById(long id) {
@@ -77,8 +75,8 @@ public class UserService {
             log.debug("Attempting to create an existing request for user #{} from user #{}.", userId, friendId);
         } else {
             userStorage.saveFriendshipRequest(userId, friendId, FriendshipStatus.REQUEST);
-            saveFeed(userId, friendId, EventType.FRIEND, Operation.ADD);
             log.debug("Creating friendship request for user #{} from user #{}.",  userId, friendId);
+            feedService.saveFeed(userId, friendId, EventType.FRIEND, Operation.ADD);
         }
     }
 
@@ -102,8 +100,8 @@ public class UserService {
         getUserById(friendId);
         if (userStorage.isExistFriendship(userId, friendId)) {
             userStorage.deleteFriendshipRequest(userId, friendId);
-            saveFeed(userId, friendId, EventType.FRIEND, Operation.REMOVE);
             log.debug("User #{} refused friendship request from user #{}.", userId, friendId);
+            feedService.saveFeed(userId, friendId, EventType.FRIEND, Operation.REMOVE);
         } else {
             log.debug("Attempting to refuse a non-existent request from user #{} to user #{}.", friendId, userId);
         }
@@ -136,13 +134,5 @@ public class UserService {
         userStorage.deleteUser(userId);
         log.debug("Delete {}.", userId);
     }
-    public void saveFeed(long id, long entityId, EventType eventType, Operation operation){
-        feedStorage.saveFeed(id, entityId, eventType, operation);
-        log.debug("Event saved: User #{} {} {} #{}.",id,operation.toString().toLowerCase(), eventType.toString().toLowerCase(), entityId );
-    }
-    public  List<Feed> getNewsFeed(long userId) {
-        List<Feed> feeds = feedStorage.getNewsFeed(userId);
-        log.debug("Loading {} events.", feeds.size());
-        return feeds;
-    }
+
 }
