@@ -21,13 +21,8 @@ public class DirectorService {
     }
 
     public Director getDirectorById(long id) {
-        Optional<Director> director = directorStorage.loadDirector(id);
-        if (director.isPresent()) {
-            log.debug("Loading {}.", director.get());
-            return director.get();
-        } else {
-            throw new NotFoundException("Director #" + id + " not found.");
-        }
+        return directorStorage.loadDirector(id)
+                .orElseThrow(() -> new NotFoundException("**Director** #" + id + " not found."));
     }
 
     public List<Director> getDirectorsByFilmId(long id) {
@@ -41,7 +36,8 @@ public class DirectorService {
     }
 
     public Director updateDirector(Director director) {
-        Director loadedDirector = getDirectorById(director.getId());
+        Director loadedDirector = directorStorage.loadDirector(director.getId())
+                .orElseThrow(() -> new NotFoundException("**Director** #" + director.getId() + " not found."));
         loadedDirector.setName(director.getName());
         directorStorage.updateDirector(loadedDirector);
         log.debug("Updating director {}.", loadedDirector);

@@ -70,7 +70,7 @@ public class FilmController {
 
     @DeleteMapping("/{filmId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteFilm(@PathVariable long filmId){
+    public void deleteFilm(@PathVariable long filmId) {
         filmService.deleteFilm(filmId);
     }
 

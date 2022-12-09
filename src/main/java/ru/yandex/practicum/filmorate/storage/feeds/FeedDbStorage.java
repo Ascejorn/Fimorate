@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate.storage.feeds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Feed;
+import ru.yandex.practicum.filmorate.model.Operation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,24 +16,13 @@ import java.util.List;
 public class FeedDbStorage implements FeedStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    private Feed makeFeed(ResultSet resultSet, long rowNum) throws SQLException {
-        return Feed.builder()
-                .timestamp(resultSet.getTimestamp("event_time").toInstant().toEpochMilli())
-                .userId(resultSet.getLong("user_id"))
-                .eventType(resultSet.getString("event_type"))
-                .operation(resultSet.getString("operation"))
-                .eventId(resultSet.getLong("event_id"))
-                .entityId(resultSet.getLong("entity_id"))
-                .build();
-    }
-
     @Autowired
-    public FeedDbStorage(JdbcTemplate jdbcTemplate){
+    public FeedDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
-    public void saveFeed(long id, long entityId, EventType eventType, Operation operation){
+    public void saveFeed(long id, long entityId, EventType eventType, Operation operation) {
         String sqlQuery = "INSERT INTO feeds (event_time," +
                 "user_id," +
                 "event_type, " +
@@ -42,7 +33,7 @@ public class FeedDbStorage implements FeedStorage {
     }
 
     @Override
-    public List<Feed> getNewsFeed(long userId){
+    public List<Feed> getNewsFeed(long userId) {
         String sql = "SELECT event_time," +
                 "user_id," +
                 "event_type," +
@@ -51,6 +42,17 @@ public class FeedDbStorage implements FeedStorage {
                 "entity_id " +
                 "FROM feeds WHERE user_id = ?" +
                 "ORDER BY event_id;";
-        return  jdbcTemplate.query(sql, this::makeFeed,userId);
+        return jdbcTemplate.query(sql, this::makeFeed, userId);
+    }
+
+    private Feed makeFeed(ResultSet resultSet, long rowNum) throws SQLException {
+        return Feed.builder()
+                .timestamp(resultSet.getTimestamp("event_time").toInstant().toEpochMilli())
+                .userId(resultSet.getLong("user_id"))
+                .eventType(resultSet.getString("event_type"))
+                .operation(resultSet.getString("operation"))
+                .eventId(resultSet.getLong("event_id"))
+                .entityId(resultSet.getLong("entity_id"))
+                .build();
     }
 }

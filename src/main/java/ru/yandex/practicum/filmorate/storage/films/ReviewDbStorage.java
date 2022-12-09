@@ -120,19 +120,16 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public void saveLikeFromUser(long reviewId, long userId) {
-        String sqlQuery = getQueryForLike();
+        String sqlQuery = "INSERT INTO REVIEW_RATING (review_id, user_id, useful) " +
+                "VALUES (?, ?, ?)";
         jdbcTemplate.update(sqlQuery, reviewId, userId, true);
     }
 
     @Override
     public void saveDislikeFromUser(long reviewId, long userId) {
-        String sqlQuery = getQueryForLike();
-        jdbcTemplate.update(sqlQuery, reviewId, userId, false);
-    }
-
-    private String getQueryForLike() {
-        return "INSERT INTO REVIEW_RATING (review_id, user_id, useful) " +
+        String sqlQuery = "INSERT INTO REVIEW_RATING (review_id, user_id, useful) " +
                 "VALUES (?, ?, ?)";
+        jdbcTemplate.update(sqlQuery, reviewId, userId, false);
     }
 
     @Override

@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.feeds.EventType;
-import ru.yandex.practicum.filmorate.storage.feeds.Operation;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.storage.films.FilmStorage;
 
 import java.util.List;
@@ -113,7 +113,6 @@ public class FilmService {
     }
 
     public void deleteFilm(long filmId) {
-        getFilmById(filmId);
         filmStorage.deleteFilm(filmId);
         log.debug("Deleting {} film.", filmId);
     }

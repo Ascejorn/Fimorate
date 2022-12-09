@@ -149,22 +149,23 @@ public class FilmDbStorage implements FilmStorage {
 
         if (genreId != null && year != null) {
             sqlQuery = sqlQuery.replace("{}", sqlGenreAndYear);
-            sqlParams = new Object[] {genreId, year, count};
+            sqlParams = new Object[]{genreId, year, count};
         } else if (genreId != null) {
             sqlQuery = sqlQuery.replace("{}", sqlGenre);
-            sqlParams = new Object[] {genreId, count};
+            sqlParams = new Object[]{genreId, count};
         } else if (year != null) {
             sqlQuery = sqlQuery.replace("{}", sqlYear);
-            sqlParams = new Object[] {year, count};
+            sqlParams = new Object[]{year, count};
         } else {
             sqlQuery = sqlQuery.replace("({})", "films");
-            sqlParams = new Object[] {count};
+            sqlParams = new Object[]{count};
         }
 
         return jdbcTemplate.query(sqlQuery, this::mapRow, sqlParams);
     }
 
-    public void deleteFilm(long filmId){
+    @Override
+    public void deleteFilm(long filmId) {
         String sql = "DELETE FROM films WHERE id = ?";
         jdbcTemplate.update(sql, filmId);
     }
@@ -255,8 +256,8 @@ public class FilmDbStorage implements FilmStorage {
 
 
     @Override
-    public List<Film> getCommonFilms(long id, long friendId){
-        String sqlQuery ="SELECT f.id, " +
+    public List<Film> getCommonFilms(long id, long friendId) {
+        String sqlQuery = "SELECT f.id, " +
                 "f.name, " +
                 "f.description, " +
                 "f.release_date, " +
@@ -273,13 +274,13 @@ public class FilmDbStorage implements FilmStorage {
                 ") r ON f.id =  r.film_id " +
                 "WHERE f.id IN (SELECT l.film_id FROM likes AS l" +
                 " WHERE l.user_id = ? or l.user_id = ? " +
-                " GROUP BY l.film_id HAVING Count(*)>1)"+
+                " GROUP BY l.film_id HAVING Count(*)>1)" +
                 "ORDER BY r.rating DESC;";
 
-        return jdbcTemplate.query(sqlQuery, this::mapRow,id,friendId);
+        return jdbcTemplate.query(sqlQuery, this::mapRow, id, friendId);
     }
 
-    public List<Film> getRecommendation(long id){
+    public List<Film> getRecommendation(long id) {
         String sql =
                 "SELECT fl.id, fl.name, fl.description, fl.release_date, fl.duration, fl.mpa_id, m.name mpa" +
                         " FROM films fl JOIN mpa m ON m.id = fl.mpa_id " +

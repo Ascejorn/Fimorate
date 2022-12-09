@@ -86,19 +86,19 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteUser(@PathVariable long userId){
+    public void deleteUser(@PathVariable long userId) {
         userService.deleteUser(userId);
     }
 
     @GetMapping("/{id}/feed")
     @ResponseStatus(HttpStatus.OK)
-    public List<Feed> getNewsFeed(@PathVariable long id ) {
+    public List<Feed> getNewsFeed(@PathVariable long id) {
         return feedService.getNewsFeed(id);
     }
 
     @GetMapping("/{id}/recommendations")
     @ResponseStatus(HttpStatus.OK)
-    public List<Film> getRecommendation(@PathVariable long id){
+    public List<Film> getRecommendation(@PathVariable long id) {
         return filmService.getRecommendation(id);
     }
 }
