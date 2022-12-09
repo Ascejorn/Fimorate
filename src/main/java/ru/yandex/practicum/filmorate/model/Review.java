@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 @ToString
 @SuperBuilder
 public class Review {
-
     @NotNull(message = "Review id is required.", groups = {Update.class})
     private Long reviewId;
 

@@ -22,12 +22,6 @@ public class FilmService {
     private final DirectorService directorService;
     private final FeedService feedService;
 
-    @Autowired
-    public FilmService(FilmStorage filmStorage, UserService userService, GenreService genreService) {
-        this.filmStorage = filmStorage;
-        this.userService = userService;
-        this.genreService = genreService;
-    }
 
     public Film getFilmById(long id) {
         return filmStorage.loadFilm(id)
@@ -38,6 +32,9 @@ public class FilmService {
         long filmId = filmStorage.saveFilm(film);
         if (film.getGenres() != null && film.getGenres().size() > 0) {
             genreService.addGenresToFilm(filmId, film.getGenres());
+        }
+        if (film.getDirectors() != null && film.getDirectors().size() > 0) {
+            directorService.addDirectorsToFilm(filmId, film.getDirectors());
         }
         Film savedFilm = getFilmById(filmId);
         log.debug("Creating new film {}.", savedFilm);
@@ -67,6 +64,11 @@ public class FilmService {
             genreService.deleteFilmGenres(film.getId());
         } else {
             genreService.updateFilmGenres(film.getId(), film.getGenres());
+        }
+        if (film.getDirectors() == null || film.getDirectors().size() == 0) {
+            directorService.deleteFilmDirectors(film.getId());
+        } else {
+            directorService.updateFilmDirectors(film.getId(), film.getDirectors());
         }
         filmStorage.updateFilm(film);
         Film savedFilm = getFilmById(film.getId());
@@ -132,13 +134,6 @@ public class FilmService {
         }
     }
 
-    public List<Film> getRecommendation(long id){
-        userService.getUserById(id);
-        List<Film> recommendationFilm = filmStorage.getRecommendation(id);
-        log.debug("Recommendation {} films.", recommendationFilm.size());
-        return recommendationFilm;
-    }
-
     public List<Film> getCommonFilms(long userId, long friendId) {
         List<Film> common = filmStorage.getCommonFilms(userId, friendId);
         log.debug("Returning {} common films.", common.size());
@@ -147,5 +142,13 @@ public class FilmService {
 
     public List<Film> searchFilm(String query, String by) {
         return filmStorage.searchFilm(query, by);
+
+    }
+
+    public List<Film> getRecommendation(long id) {
+        userService.getUserById(id);
+        List<Film> recommendationFilm = filmStorage.getRecommendation(id);
+        log.debug("Recommendation {} films.", recommendationFilm.size());
+        return recommendationFilm;
     }
 }

@@ -79,9 +79,9 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .collect(Collectors.toList());
     }
 
-    public void deleteFilm(long filmId) { 
+    public void deleteFilm(long filmId) {
         films.remove(filmId);
-        
+
     }
     @Override
     public List<Film> loadFilmsOfDirectorSortedByYears(long directorId) {
@@ -103,16 +103,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getRecommendation(long id){
-        return new ArrayList<>();
-        
-    }
-    
     public List<Film> searchFilm(String query, String by) {
         return null;
     }
 
-    private int loadLikes(long filmId) {
-        return likes.get(filmId).size();
+    @Override
+    public List<Film> getRecommendation(long id){
+        return new ArrayList<>();
     }
 }
