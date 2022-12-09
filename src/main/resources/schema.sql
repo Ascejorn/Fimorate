@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS review_rating (
 CREATE TABLE IF NOT EXISTS feeds (
     event_id    BIGINT PRIMARY KEY AUTO_INCREMENT,
     event_time  timestamp,
-    user_id     BIGINT REFERENCES users (id),
+    user_id     BIGINT REFERENCES users (id)  ON DELETE CASCADE,
     event_type  VARCHAR(16),
     operation   VARCHAR(16),
     entity_id   BIGINT
