@@ -134,5 +134,4 @@ public class UserService {
         userStorage.deleteUser(userId);
         log.debug("Delete {}.", userId);
     }
-
 }

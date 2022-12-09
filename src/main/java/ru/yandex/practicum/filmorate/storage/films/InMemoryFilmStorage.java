@@ -111,4 +111,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     public List<Film> searchFilm(String query, String by) {
         return null;
     }
+
+    private int loadLikes(long filmId) {
+        return likes.get(filmId).size();
+    }
 }

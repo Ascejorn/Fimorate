@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS films (
     description  TEXT NOT NULL,
     release_date DATE NOT NULL,
     duration     BIGINT NOT NULL,
-    mpa_id       BIGINT REFERENCES mpa(id) ON DELETE NO ACTION
+    mpa_id       BIGINT REFERENCES mpa(id) ON DELETE NO ACTION,
+    genre_id     BIGINT REFERENCES genres(id) ON DELETE SET NULL
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS film_id_uniq_index
