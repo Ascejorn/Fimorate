@@ -21,6 +21,18 @@ public interface FilmStorage {
 
     boolean hasFilmLikeFromUser(long filmId, long userId);
 
-    List<Film> loadPopularFilms(long count);
+    List<Film> loadPopularFilms(long count, Long genreId, Integer year);
 
+    void deleteFilm(long filmId);
+
+    List<Film> loadFilmsOfDirectorSortedByYears(long directorId);
+
+    List<Film> loadFilmsOfDirectorSortedByLikes(long directorId);
+
+    List<Film> getCommonFilms(long userId, long friendId);
+
+    List<Film> searchFilm(String query, String by);
+
+    List<Film> getRecommendation(long id);
 }
+
